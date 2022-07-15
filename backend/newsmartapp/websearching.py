@@ -79,17 +79,15 @@ def update_results(input):
     print(output)
     return output
 
-
-def searchingwebinput(input_string):
+@shared_task(bind=True)
+def searchingwebinput(self, input_string):
 
     output = []
     if not WebSearching.objects.all():
-        # print("MKC")
         print("Inside parse_results()")
         output = parse_results(input_string)
         # print(output)
 
-    # print("MKC1")
     output = update_results(input_string)
     # print(output)
 

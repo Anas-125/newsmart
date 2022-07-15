@@ -1,9 +1,11 @@
 from asyncio.windows_events import NULL
+from async_timeout import timeout
 
 # import statistics
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from grpc import StatusCode
+from pandas import Interval
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
@@ -32,8 +34,9 @@ class WebSearchingViewSet(viewsets.ModelViewSet):
         query = request.data
         print(query)
         input_string = query["query"]
-        output = searchingwebinput(input_string)
-        serializer = WebSearchingSerializer(output, many=True)
+        output = searchingwebinput.delay(input_string)
+        resultt=output.wait(timeout=None,interval=1)
+        serializer = WebSearchingSerializer(resultt, many=True)
         return Response(serializer.data)
 
     # def get(self,request):
@@ -74,8 +77,9 @@ class CosineSimilarityViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # query = request.data["query"]
         # print(query)
-        output = cosinesimilarity(request.data["query"])
-        serializer = CosineSimilaritySerializer(output, many=True)
+        output = cosinesimilarity.delay(request.data["query"])
+        resultt=output.wait(timeout=None,interval=1)
+        serializer = CosineSimilaritySerializer(resultt, many=True)
         return Response(serializer.data)
 
 
