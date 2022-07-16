@@ -4,6 +4,7 @@ import requests
 import urllib
 import pandas as pd
 from requests_html import HTML
+from celery import shared_task
 from requests_html import HTMLSession
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -88,8 +89,8 @@ def remove_stopwords(doc_text):
             cleaned_text.append(words)
     return cleaned_text
 
-
-def cosinesimilarity(input_string):
+@shared_task(bind=True)
+def cosinesimilarity(self, input_string):
 
     print(input_string)
     count = 0
